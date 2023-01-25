@@ -1,13 +1,27 @@
-const express = require('express')
+import express from 'express'
+import 'dotenv/config'
+import bodyParser from 'body-parser'
+import usersRoutes from './src/routes/users.js'
+import mongoose from 'mongoose';
+
 const app = express()
-
+const PORT = 5000;
+app.use(bodyParser.json())
+app.use('/users', usersRoutes)
+app.listen(PORT, ()=> console.log("Server running on port 5000"))
   app.get('/', (request, response) => {
-      response.send('<h1>Hey, Every one</h1>')
+    console.log("listening")
+    response.send('<h1>Hey, Every one</h1>')
   })
 
-  var server= app.listen(8080, function(){
-    var host = server.address().address
-    var port = server.address().port
+mongoose.connect(process.env.DB_CONNECTION, ()=> console.log('connected!'))
+
+
+
+  // var server= app.listen(8080, function(){
+  //   var host = server.address().address
+  //   var port = server.address().port
     
-    console.log("Hello")
-  })
+  //   console.log("Hello")
+  // })
+  
