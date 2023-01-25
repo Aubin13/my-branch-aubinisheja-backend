@@ -1,18 +1,20 @@
 import express from 'express'
 import http from 'http'
+import User from '../models/user.js'
 import { v4 as uuidv4} from 'uuid'
 uuidv4()
 
 const router = express.Router()
 
-let users = [
-
-]
+let users = []
 router.post('/', (req, res) =>{
-    const user = req.body;
-    const userWithId = { ...user, id: uuidv4()}
-    users.push(userWithId);
-    res.send('user added!')
+    let user = new User({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        id: uuidv4()
+    });
+    res.send(`user ${user.username} added!`)
 })
 
 router.get('/',(req, res) =>{
