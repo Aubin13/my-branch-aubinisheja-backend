@@ -6,6 +6,7 @@ import swaggerJsdoc from 'swagger-jsdoc'
 import usersRoutes from './src/routes/users.js'
 import mongoose from 'mongoose'
 import posts from './src/routes/post.js'
+import cors from 'cors'
 
 
 const app = express()
