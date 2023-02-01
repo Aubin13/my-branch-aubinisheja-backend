@@ -1,47 +1,60 @@
 import express from 'express'
-import http from 'http'
-import User from '../models/user.js'
-import { v4 as uuidv4} from 'uuid'
-uuidv4()
+import users from '../models/user.js'
 
-const router = express.Router()
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: for getting access to users
+ *     tags: [users]
+ *     description: We are getting users here
+ *     responses:
+ *       200:
+ *         description: whatever
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 
-let users = []
-router.post('/', (req, res) =>{
-    let user = new User({
-        username: req.body.username,
+
+const usersRoutes = express.Router();
+usersRoutes.get('/users', async(req, res)=> {
+    const getUser = await users.find()
+    res.status(200).json(getUser)
+})
+
+usersRoutes.post('/users', async(req, res)=> {
+    const insertUsers= new users({
+        fullname: req.body.fullname,
         email: req.body.email,
-        password: req.body.password,
-        id: uuidv4()
-    });
-    res.send(`user ${user.username} added!`)
+        username:req.body.username,
+        password: req.body.password, 
+        date: new Date().toDateString()
+    })
+    await insertUsers.save()
+	res.status(200).json(insertUsers)
 })
 
-router.get('/',(req, res) =>{
-    console.log(users)
-    res.send(users)
+usersRoutes.delete('/users/:id', async(req, res)=> {
+    try {
+        const id = req.params.id
+        await users.deleteOne({
+            _id: id
+        })
+        res.status(200).json('the user have been deleted for sure')
+        
+    } catch (error) {
+        console.log(error)
+        res.status(404).json('user not found!')
+        
+    }
 })
 
-router.get('/:id', (req, res)=>{
-    const {id} = req.params
-    const userFind = users.find((user) => user.id === id)
-    res.send(userFind)
-})
 
-router.delete('/:id', (req,res)=>{
-    const {id} = req.params;
-    users = users.filter((user) => user.id != id)
-})
 
-router.patch('/:id', (req, res)=> {
-    const {id} =req.params
-    const {firstName, lastName, age} = req.body
-    const userUpdate = users.find((user) => user.id ===id)
-    if(firstName) userUpdate.firstName = firstName
-    if(lastName) userUpdate.lastName = lastName
-    if(age) userUpdate.age = age
-    res.send("User updated")
-    console.log("user updated")
-})
 
-export default router;
+
+
+
+export default usersRoutes
