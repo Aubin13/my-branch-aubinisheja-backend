@@ -6,14 +6,15 @@ import swaggerJsdoc from 'swagger-jsdoc'
 import usersRoutes from './src/routes/users.js'
 import mongoose from 'mongoose'
 import posts from './src/routes/post.js'
+import fetch from 'node-fetch'
 import cors from 'cors'
 
 
 const app = express()
 const PORT = 5000;
 app.use(bodyParser.json())
-app.use('/users', usersRoutes)
-app.use('/posts', posts)
+app.use(usersRoutes)
+app.use(posts)
 app.listen(PORT, ()=> console.log("Server running on port 5000"))
   app.get('/', (request, response) => {
     console.log("listening")
@@ -23,6 +24,12 @@ app.listen(PORT, ()=> console.log("Server running on port 5000"))
 
 mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser:true }, ()=> console.log('connected!'))
 app.use(express.json());
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
+app.use(cors())
+
 const options = {
   swaggerDefinition:{
     openapi: '3.0.0',
